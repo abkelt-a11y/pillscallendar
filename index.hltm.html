@@ -1,0 +1,1193 @@
+<!DOCTYPE html>
+<html lang="el">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+<title>Χάπια Τάσου</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=Mulish:wght@300;400;500;600&display=swap');
+
+:root {
+  --bg: #080c14;
+  --s1: #111622;
+  --s2: #192033;
+  --s3: #1f2840;
+  --green: #4ade80;
+  --green-dim: rgba(74,222,128,0.12);
+  --amber: #fbbf24;
+  --amber-dim: rgba(251,191,36,0.12);
+  --red: #f87171;
+  --red-dim: rgba(248,113,113,0.1);
+  --blue: #60a5fa;
+  --blue-dim: rgba(96,165,250,0.1);
+  --text: #e2e8f0;
+  --muted: #64748b;
+  --border: rgba(255,255,255,0.06);
+  --r: 14px;
+}
+
+* { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
+
+body {
+  background: var(--bg);
+  color: var(--text);
+  font-family: 'Mulish', sans-serif;
+  min-height: 100vh;
+  max-width: 500px;
+  margin: 0 auto;
+  padding-bottom: 100px;
+}
+
+/* HEADER */
+.header {
+  padding: 24px 20px 16px;
+  background: linear-gradient(180deg, rgba(74,222,128,0.04) 0%, transparent 100%);
+  border-bottom: 1px solid var(--border);
+  margin-bottom: 20px;
+}
+.header-top { display: flex; align-items: center; justify-content: space-between; }
+.app-title {
+  font-family: 'Syne', sans-serif;
+  font-size: 1.5rem;
+  font-weight: 800;
+  color: var(--green);
+  letter-spacing: -0.5px;
+}
+.app-sub { font-size: 0.78rem; color: var(--muted); margin-top: 2px; }
+.header-date {
+  font-size: 0.78rem;
+  color: var(--muted);
+  background: var(--s1);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 6px 10px;
+  font-variant-numeric: tabular-nums;
+}
+
+/* NAV */
+.nav {
+  position: fixed;
+  bottom: 0; left: 50%;
+  transform: translateX(-50%);
+  width: 100%;
+  max-width: 500px;
+  background: var(--s1);
+  border-top: 1px solid var(--border);
+  display: flex;
+  z-index: 50;
+  padding: 8px 0 12px;
+}
+.nav-btn {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+  background: none;
+  border: none;
+  color: var(--muted);
+  font-family: 'Mulish', sans-serif;
+  font-size: 0.68rem;
+  font-weight: 600;
+  cursor: pointer;
+  padding: 6px 0;
+  transition: color 0.2s;
+  letter-spacing: 0.3px;
+}
+.nav-btn .icon { font-size: 1.3rem; }
+.nav-btn.active { color: var(--green); }
+
+/* PAGES */
+.page { display: none; padding: 0 16px; }
+.page.active { display: block; }
+
+/* CARDS */
+.card {
+  background: var(--s1);
+  border: 1px solid var(--border);
+  border-radius: var(--r);
+  padding: 18px;
+  margin-bottom: 14px;
+}
+.card-title {
+  font-family: 'Syne', sans-serif;
+  font-size: 0.7rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 1.5px;
+  color: var(--muted);
+  margin-bottom: 14px;
+}
+
+/* BUTTONS */
+.btn {
+  display: flex; align-items: center; justify-content: center; gap: 8px;
+  width: 100%; padding: 16px;
+  border: none; border-radius: 12px;
+  font-family: 'Syne', sans-serif;
+  font-size: 0.95rem; font-weight: 700;
+  cursor: pointer; transition: all 0.15s;
+  letter-spacing: -0.2px;
+}
+.btn:active { transform: scale(0.98); }
+.btn-green { background: linear-gradient(135deg, #4ade80, #22c55e); color: #052e16; }
+.btn-amber { background: linear-gradient(135deg, #fbbf24, #f59e0b); color: #1c1917; }
+.btn-ghost {
+  background: var(--s2); border: 1px solid var(--border);
+  color: var(--text); font-size: 0.85rem;
+}
+.btn-red-ghost {
+  background: transparent; border: 1px solid rgba(248,113,113,0.25);
+  color: var(--red); font-size: 0.82rem; padding: 10px;
+}
+.btn-sm {
+  padding: 8px 14px; width: auto; border-radius: 8px;
+  font-size: 0.78rem;
+}
+
+/* COUNTDOWN */
+.countdown-wrap {
+  background: linear-gradient(135deg, var(--amber-dim), rgba(251,191,36,0.04));
+  border: 1px solid rgba(251,191,36,0.2);
+  border-radius: var(--r);
+  padding: 20px;
+  margin-bottom: 14px;
+  text-align: center;
+}
+.countdown-label {
+  font-size: 0.72rem; text-transform: uppercase; letter-spacing: 1.5px;
+  color: var(--amber); font-weight: 700; margin-bottom: 10px;
+}
+.countdown-time {
+  font-family: 'Syne', sans-serif;
+  font-size: 3.2rem; font-weight: 800;
+  color: var(--amber); letter-spacing: -3px;
+  font-variant-numeric: tabular-nums; line-height: 1;
+}
+.countdown-time.urgent { color: var(--red); animation: urgentPulse 1s infinite; }
+@keyframes urgentPulse { 0%,100%{opacity:1} 50%{opacity:0.6} }
+.countdown-sub { font-size: 0.78rem; color: var(--muted); margin-top: 8px; }
+
+/* SCHEDULE LIST */
+.dose-row {
+  display: flex; align-items: center; gap: 12px;
+  padding: 12px 0;
+  border-bottom: 1px solid var(--border);
+  animation: fadeUp 0.3s ease forwards;
+}
+.dose-row:last-child { border-bottom: none; padding-bottom: 0; }
+.dose-row:first-child { padding-top: 0; }
+@keyframes fadeUp { from{opacity:0;transform:translateY(6px)} to{opacity:1;transform:translateY(0)} }
+
+.dose-num {
+  width: 34px; height: 34px; border-radius: 50%;
+  display: flex; align-items: center; justify-content: center;
+  font-family: 'Syne', sans-serif; font-size: 0.8rem; font-weight: 700;
+  flex-shrink: 0;
+}
+.dose-num.taken { background: var(--green-dim); color: var(--green); }
+.dose-num.next { background: var(--amber-dim); color: var(--amber); animation: ringPulse 2s infinite; }
+.dose-num.pending { background: var(--s2); color: var(--muted); }
+.dose-num.missed { background: var(--red-dim); color: var(--red); }
+@keyframes ringPulse {
+  0%,100%{box-shadow:0 0 0 0 rgba(251,191,36,0.3)}
+  50%{box-shadow:0 0 0 7px rgba(251,191,36,0)}
+}
+
+.dose-info { flex: 1; }
+.dose-time {
+  font-family: 'Syne', sans-serif; font-size: 1.05rem; font-weight: 700;
+  font-variant-numeric: tabular-nums;
+}
+.dose-time.taken { color: var(--muted); text-decoration: line-through; }
+.dose-time.next { color: var(--amber); }
+.dose-time.missed { color: var(--red); }
+
+.dose-meta { font-size: 0.75rem; color: var(--muted); margin-top: 2px; }
+
+.food-tag {
+  display: inline-block; margin-top: 4px;
+  font-size: 0.68rem; padding: 2px 8px; border-radius: 20px;
+  background: var(--red-dim); border: 1px solid rgba(248,113,113,0.2); color: var(--red);
+}
+.food-ok-tag {
+  display: inline-block; margin-top: 4px;
+  font-size: 0.68rem; padding: 2px 8px; border-radius: 20px;
+  background: var(--green-dim); border: 1px solid rgba(74,222,128,0.2); color: var(--green);
+}
+
+.badge {
+  font-size: 0.68rem; padding: 3px 9px; border-radius: 20px; font-weight: 600;
+}
+.badge-taken { background: var(--green-dim); color: var(--green); }
+.badge-next { background: var(--amber-dim); color: var(--amber); }
+.badge-pending { background: var(--s2); color: var(--muted); }
+.badge-missed { background: var(--red-dim); color: var(--red); }
+
+/* WEEKLY GRID */
+.week-grid {
+  display: grid; grid-template-columns: repeat(7, 1fr); gap: 6px;
+  margin-bottom: 16px;
+}
+.week-day {
+  display: flex; flex-direction: column; align-items: center; gap: 4px;
+}
+.week-day-label { font-size: 0.62rem; color: var(--muted); font-weight: 600; text-transform: uppercase; }
+.week-day-dot {
+  width: 32px; height: 32px; border-radius: 50%;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 0.72rem; font-weight: 700;
+  cursor: pointer; transition: all 0.2s;
+}
+.week-day-dot.today { border: 2px solid var(--green); }
+.week-day-dot.full { background: var(--green-dim); color: var(--green); }
+.week-day-dot.partial { background: var(--amber-dim); color: var(--amber); }
+.week-day-dot.missed-day { background: var(--red-dim); color: var(--red); }
+.week-day-dot.empty { background: var(--s2); color: var(--muted); }
+.week-day-dot.future { background: var(--s1); color: var(--border); }
+
+/* FORM */
+.form-group { margin-bottom: 14px; }
+.form-label {
+  display: block; font-size: 0.72rem; font-weight: 700;
+  text-transform: uppercase; letter-spacing: 0.8px;
+  color: var(--muted); margin-bottom: 6px;
+}
+.form-input, .form-select {
+  width: 100%; padding: 12px 14px;
+  background: var(--s2); border: 1px solid var(--border);
+  border-radius: 10px; color: var(--text);
+  font-family: 'Mulish', sans-serif; font-size: 0.92rem;
+  outline: none; transition: border-color 0.2s;
+}
+.form-input:focus, .form-select:focus { border-color: var(--green); }
+.form-select option { background: var(--s2); }
+.row2 { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+
+/* TIME INPUTS */
+.time-inputs { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 8px; }
+.time-input-wrap { display: flex; align-items: center; gap: 6px; }
+.time-input-wrap input {
+  width: 90px; padding: 8px 10px;
+  background: var(--s2); border: 1px solid var(--border);
+  border-radius: 8px; color: var(--text);
+  font-family: 'Mulish', sans-serif; font-size: 0.88rem;
+  outline: none;
+}
+.time-input-wrap input:focus { border-color: var(--green); }
+
+/* OTHER PILL ROWS */
+.other-row {
+  display: flex; align-items: center; gap: 10px;
+  padding: 12px 0; border-bottom: 1px solid var(--border);
+}
+.other-row:last-child { border-bottom: none; }
+.other-icon {
+  width: 36px; height: 36px; border-radius: 10px;
+  background: var(--blue-dim); border: 1px solid rgba(96,165,250,0.2);
+  display: flex; align-items: center; justify-content: center;
+  font-size: 1rem; flex-shrink: 0;
+}
+.other-info { flex: 1; }
+.other-name { font-weight: 600; font-size: 0.9rem; }
+.other-detail { font-size: 0.73rem; color: var(--muted); margin-top: 2px; }
+.other-status {
+  font-size: 0.68rem; padding: 2px 8px; border-radius: 20px;
+  background: var(--green-dim); color: var(--green); font-weight: 600;
+  white-space: nowrap;
+}
+.other-status.expired { background: var(--red-dim); color: var(--red); }
+.other-status.ending-soon { background: var(--amber-dim); color: var(--amber); }
+
+/* REPORT */
+.report-preview {
+  background: var(--s2); border: 1px solid var(--border);
+  border-radius: 10px; padding: 14px;
+  font-size: 0.8rem; line-height: 1.8; color: var(--text);
+  font-family: monospace; white-space: pre-wrap;
+  max-height: 280px; overflow-y: auto;
+  margin-bottom: 12px;
+}
+
+/* TOAST */
+.toast {
+  position: fixed; bottom: 80px; left: 50%;
+  transform: translateX(-50%) translateY(20px);
+  background: var(--s3); border: 1px solid var(--border);
+  border-radius: 10px; padding: 12px 18px;
+  font-size: 0.85rem; color: var(--text);
+  opacity: 0; transition: all 0.25s; z-index: 200;
+  box-shadow: 0 8px 32px rgba(0,0,0,0.5);
+  white-space: nowrap;
+}
+.toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
+
+/* DIVIDER */
+.divider { height: 1px; background: var(--border); margin: 16px 0; }
+
+/* INFO BOX */
+.info-box {
+  background: var(--green-dim); border: 1px solid rgba(74,222,128,0.15);
+  border-radius: 10px; padding: 12px 14px;
+  font-size: 0.8rem; color: var(--muted); line-height: 1.6;
+  margin-bottom: 14px;
+}
+.info-box strong { color: var(--green); }
+
+/* SECTION HEADER */
+.section-header {
+  font-family: 'Syne', sans-serif;
+  font-size: 1rem; font-weight: 700; color: var(--text);
+  margin-bottom: 14px; margin-top: 4px;
+}
+
+/* EMPTY */
+.empty { text-align: center; padding: 36px 20px; color: var(--muted); }
+.empty .e-icon { font-size: 2.5rem; opacity: 0.3; margin-bottom: 10px; }
+
+/* DOSE SUMMARY */
+.dose-summary {
+  display: flex; gap: 10px; margin-bottom: 14px;
+}
+.dose-stat {
+  flex: 1; background: var(--s1); border: 1px solid var(--border);
+  border-radius: 10px; padding: 12px; text-align: center;
+}
+.dose-stat-num {
+  font-family: 'Syne', sans-serif; font-size: 1.6rem; font-weight: 800; line-height: 1;
+}
+.dose-stat-label { font-size: 0.68rem; color: var(--muted); margin-top: 4px; font-weight: 600; }
+.dose-stat-num.green { color: var(--green); }
+.dose-stat-num.red { color: var(--red); }
+.dose-stat-num.amber { color: var(--amber); }
+
+/* SCROLLBAR */
+::-webkit-scrollbar { width: 4px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb { background: var(--s3); border-radius: 2px; }
+</style>
+</head>
+<body>
+
+<div class="header">
+  <div class="header-top">
+    <div>
+      <div class="app-title">💊 MediTrack</div>
+      <div class="app-sub">Πρόγραμμα χαπιών Τάσου</div>
+    </div>
+    <div class="header-date" id="header-date">—</div>
+  </div>
+</div>
+
+<!-- PAGE: TODAY -->
+<div id="page-today" class="page active">
+
+  <!-- No session -->
+  <div id="no-session">
+    <div class="info-box">
+      <strong>Πώς λειτουργεί:</strong> Όταν πάρεις το πρώτο χάπι της ημέρας, πάτα το κουμπί παρακάτω. Το πρόγραμμα υπολογίζει αυτόματα τις επόμενες <strong>6 δόσεις</strong> ανά <strong>3 ώρες και 10 λεπτά</strong>.
+    </div>
+    <button class="btn btn-green" onclick="startSession()">
+      💊 Πήρα το 1ο χάπι τώρα
+    </button>
+  </div>
+
+  <!-- Active session -->
+  <div id="active-session" style="display:none">
+
+    <!-- Countdown -->
+    <div class="countdown-wrap" id="countdown-wrap">
+      <div class="countdown-label">⏱ Επόμενο χάπι σε</div>
+      <div class="countdown-time" id="countdown-time">--:--:--</div>
+      <div class="countdown-sub" id="countdown-sub">—</div>
+    </div>
+
+    <!-- Stats -->
+    <div class="dose-summary">
+      <div class="dose-stat">
+        <div class="dose-stat-num green" id="stat-taken">0</div>
+        <div class="dose-stat-label">Ελήφθησαν</div>
+      </div>
+      <div class="dose-stat">
+        <div class="dose-stat-num amber" id="stat-pending">0</div>
+        <div class="dose-stat-label">Αναμένουν</div>
+      </div>
+      <div class="dose-stat">
+        <div class="dose-stat-num red" id="stat-missed">0</div>
+        <div class="dose-stat-label">Χάθηκαν</div>
+      </div>
+    </div>
+
+    <!-- Dose + food info -->
+    <div class="card" style="display:flex; gap:16px; align-items:center;">
+      <div>
+        <div class="card-title">Δόση</div>
+        <div style="font-family:'Syne',sans-serif; font-size:2.2rem; font-weight:800; color:var(--green); line-height:1;" id="main-dose-display">¾</div>
+        <div style="font-size:0.75rem; color:var(--muted); margin-top:4px;">χάπι / δόση</div>
+      </div>
+      <div style="border-left:1px solid var(--border); padding-left:16px; flex:1;">
+        <div class="card-title">Φαγητό</div>
+        <div style="font-size:0.78rem; color:var(--muted); line-height:1.8;">
+          ❌ <span style="color:var(--red)">1 ώρα πριν</span> το χάπι<br>
+          ❌ <span style="color:var(--red)">1 ώρα μετά</span> το χάπι
+        </div>
+      </div>
+    </div>
+
+    <!-- Schedule -->
+    <div class="card">
+      <div class="card-title">Πρόγραμμα σήμερα</div>
+      <div id="schedule-list"></div>
+    </div>
+
+    <!-- Report + Reset -->
+    <button class="btn btn-ghost" onclick="showReport()" style="margin-bottom:10px;">
+      📊 Αποστολή Report WhatsApp
+    </button>
+    <button class="btn btn-red-ghost" onclick="resetSession()">
+      🔄 Επαναφορά / Νέα Ημέρα
+    </button>
+
+  </div>
+</div>
+
+<!-- PAGE: WEEKLY -->
+<div id="page-week" class="page">
+  <div class="section-header">Εβδομαδιαία Επισκόπηση</div>
+
+  <div class="card">
+    <div class="card-title">Αυτή η εβδομάδα</div>
+    <div class="week-grid" id="week-grid"></div>
+  </div>
+
+  <div class="card">
+    <div class="card-title" id="week-day-title">Επέλεξε ημέρα</div>
+    <div id="week-day-detail">
+      <div class="empty"><div class="e-icon">📅</div><div>Πάτα μια μέρα για λεπτομέρειες</div></div>
+    </div>
+  </div>
+
+  <!-- Other pills weekly -->
+  <div class="card" id="other-pills-weekly" style="display:none">
+    <div class="card-title">Άλλα Χάπια — Κατάσταση</div>
+    <div id="other-pills-weekly-list"></div>
+  </div>
+</div>
+
+<!-- PAGE: OTHER PILLS -->
+<div id="page-other" class="page">
+  <div class="section-header">Σταθερά Χάπια</div>
+
+  <div id="other-list-wrap">
+    <div class="empty"><div class="e-icon">💊</div><div>Δεν έχουν προστεθεί χάπια ακόμα</div></div>
+  </div>
+
+  <div class="divider"></div>
+  <div class="section-header" style="font-size:0.85rem;">+ Προσθήκη Χαπιού</div>
+
+  <div class="card">
+    <div class="form-group">
+      <label class="form-label">Όνομα χαπιού</label>
+      <input class="form-input" id="np-name" placeholder="π.χ. Βιταμίνη D3">
+    </div>
+    <div class="row2">
+      <div class="form-group">
+        <label class="form-label">Δόση</label>
+        <input class="form-input" id="np-dose" placeholder="π.χ. 1 δισκίο">
+      </div>
+      <div class="form-group">
+        <label class="form-label">Φορές / μέρα</label>
+        <select class="form-select" id="np-times" onchange="updateTimeInputs()">
+          <option value="1">1×</option>
+          <option value="2">2×</option>
+          <option value="3">3×</option>
+          <option value="4">4×</option>
+        </select>
+      </div>
+    </div>
+
+    <div class="form-group">
+      <label class="form-label">Ώρες λήψης</label>
+      <div class="time-inputs" id="time-inputs">
+        <div class="time-input-wrap">
+          <span style="font-size:0.75rem;color:var(--muted);">1η</span>
+          <input type="time" value="08:00" id="np-time-0">
+        </div>
+      </div>
+    </div>
+
+    <div class="row2">
+      <div class="form-group">
+        <label class="form-label">Διάρκεια θεραπείας</label>
+        <select class="form-select" id="np-duration">
+          <option value="0">Χωρίς λήξη</option>
+          <option value="7">7 ημέρες</option>
+          <option value="10">10 ημέρες</option>
+          <option value="14">14 ημέρες</option>
+          <option value="21">21 ημέρες</option>
+          <option value="30">1 μήνας</option>
+          <option value="60">2 μήνες</option>
+          <option value="90">3 μήνες</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <label class="form-label">Ημ/νία έναρξης</label>
+        <input type="date" class="form-input" id="np-start">
+      </div>
+    </div>
+
+    <div class="form-group" style="margin-bottom:0">
+      <label class="form-label">Σημειώσεις</label>
+      <input class="form-input" id="np-notes" placeholder="π.χ. με φαγητό">
+    </div>
+    <div style="margin-top:14px;">
+      <button class="btn btn-green" onclick="addOtherPill()">+ Προσθήκη</button>
+    </div>
+  </div>
+</div>
+
+<!-- PAGE: SETTINGS -->
+<div id="page-settings" class="page">
+  <div class="section-header">Ρυθμίσεις</div>
+
+  <div class="card">
+    <div class="card-title">Κύριο Χάπι</div>
+    <div class="form-group">
+      <label class="form-label">Δόση ανά λήψη</label>
+      <select class="form-select" id="main-dose-select" onchange="saveMainDose()">
+        <option value="¼">¼ χάπι</option>
+        <option value="½">½ χάπι</option>
+        <option value="¾" selected>¾ χάπι</option>
+        <option value="1">1 ολόκληρο</option>
+        <option value="1¼">1¼ χάπι</option>
+        <option value="1½">1½ χάπι</option>
+      </select>
+    </div>
+    <div class="row2">
+      <div class="form-group">
+        <label class="form-label">Διάστημα δόσεων</label>
+        <select class="form-select" id="main-interval-select" onchange="saveMainDose()">
+          <option value="120">2 ώρες</option>
+          <option value="150">2ω 30λ</option>
+          <option value="180">3 ώρες</option>
+          <option value="190">3ω 10λ</option>
+          <option value="210">3ω 30λ</option>
+          <option value="240">4 ώρες</option>
+          <option value="300">5 ώρες</option>
+          <option value="360">6 ώρες</option>
+          <option value="480">8 ώρες</option>
+          <option value="720">12 ώρες</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <label class="form-label">Δόσεις / ημέρα</label>
+        <select class="form-select" id="main-maxdoses-select" onchange="saveMainDose()">
+          <option value="2">2</option>
+          <option value="3">3</option>
+          <option value="4">4</option>
+          <option value="5">5</option>
+          <option value="6">6</option>
+          <option value="7">7</option>
+          <option value="8">8</option>
+        </select>
+      </div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-title">Αποδέκτες Report</div>
+    <div class="form-group">
+      <label class="form-label">Τηλέφωνο 1 (π.χ. Σοφία)</label>
+      <input class="form-input" id="report-phone1" placeholder="+30 69xxxxxxxx" type="tel">
+    </div>
+    <div class="form-group">
+      <label class="form-label">Όνομα 1</label>
+      <input class="form-input" id="report-name1" placeholder="π.χ. Σοφία">
+    </div>
+    <div class="divider"></div>
+    <div class="form-group">
+      <label class="form-label">Τηλέφωνο 2 (προαιρετικό)</label>
+      <input class="form-input" id="report-phone2" placeholder="+30 69xxxxxxxx" type="tel">
+    </div>
+    <div class="form-group" style="margin-bottom:0">
+      <label class="form-label">Όνομα 2</label>
+      <input class="form-input" id="report-name2" placeholder="π.χ. Τάσος">
+    </div>
+    <div style="margin-top:14px;">
+      <button class="btn btn-ghost btn-sm" style="width:auto; padding:10px 20px;" onclick="saveSettings()">💾 Αποθήκευση</button>
+    </div>
+  </div>
+
+  <div class="card" id="saved-other-settings" style="display:none">
+    <div class="card-title">Αποθηκευμένα Χάπια</div>
+    <div id="settings-other-list"></div>
+  </div>
+</div>
+
+<!-- REPORT MODAL -->
+<div id="report-modal" style="display:none; position:fixed; inset:0; background:rgba(0,0,0,0.8); z-index:100; padding:20px; display:flex; align-items:flex-end; justify-content:center;">
+  <div style="background:var(--s1); border:1px solid var(--border); border-radius:20px; padding:20px; width:100%; max-width:460px; max-height:80vh; overflow-y:auto;">
+    <div style="font-family:'Syne',sans-serif; font-size:1rem; font-weight:700; margin-bottom:14px;">📊 Ημερήσιο Report</div>
+    <div class="report-preview" id="report-text"></div>
+    <div style="display:flex; gap:10px; flex-wrap:wrap;">
+      <button class="btn btn-green" style="flex:1;" onclick="sendWhatsApp(1)">
+        📱 WhatsApp → <span id="wa-name1">Αποδέκτης 1</span>
+      </button>
+      <button class="btn btn-ghost btn-sm" id="wa-btn2" onclick="sendWhatsApp(2)" style="flex:1; display:none;">
+        📱 <span id="wa-name2">Αποδέκτης 2</span>
+      </button>
+    </div>
+    <button class="btn btn-red-ghost" style="margin-top:10px;" onclick="closeReport()">Κλείσιμο</button>
+  </div>
+</div>
+
+<!-- BOTTOM NAV -->
+<nav class="nav">
+  <button class="nav-btn active" onclick="switchPage('today',this)">
+    <span class="icon">💊</span>Σήμερα
+  </button>
+  <button class="nav-btn" onclick="switchPage('week',this)">
+    <span class="icon">📅</span>Εβδομάδα
+  </button>
+  <button class="nav-btn" onclick="switchPage('other',this)">
+    <span class="icon">🔔</span>Χάπια
+  </button>
+  <button class="nav-btn" onclick="switchPage('settings',this)">
+    <span class="icon">⚙️</span>Ρυθμίσεις
+  </button>
+</nav>
+
+<div id="toast" class="toast"></div>
+
+<script>
+// ── CONSTANTS ──────────────────────────────────────────────────────────
+const MAX_DOSES_DEFAULT = 6;
+function getInterval() { return S.intervalMin * 60 * 1000; }
+function getMaxDoses() { return S.maxDoses || MAX_DOSES_DEFAULT; }
+const DAY_NAMES = ['Κυρ','Δευ','Τρί','Τετ','Πέμ','Παρ','Σάβ'];
+const MONTH_NAMES = ['Ιαν','Φεβ','Μαρ','Απρ','Μαΐ','Ιουν','Ιουλ','Αυγ','Σεπ','Οκτ','Νοε','Δεκ'];
+
+// ── STATE ──────────────────────────────────────────────────────────────
+let S = {
+  sessionStart: null,
+  dose: '¾',
+  intervalMin: 190,    // 3h 10min default
+  maxDoses: 6,
+  takenDoses: [],      // timestamps of actual takes
+  missedDoses: [],     // indices marked as missed
+  history: {},         // date string -> { taken:[], missed:[], dose, sessionStart }
+  otherPills: [],
+  reportPhone1: '', reportName1: 'Σοφία',
+  reportPhone2: '', reportName2: 'Τάσος'
+};
+
+function save() { localStorage.setItem('meditrack_v2', JSON.stringify(S)); }
+function load() {
+  try {
+    const r = localStorage.getItem('meditrack_v2');
+    if (r) Object.assign(S, JSON.parse(r));
+  } catch(e){}
+}
+
+// ── NAV ────────────────────────────────────────────────────────────────
+function switchPage(name, btn) {
+  document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+  document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
+  document.getElementById('page-'+name).classList.add('active');
+  btn.classList.add('active');
+  if (name==='week') renderWeek();
+  if (name==='other') renderOtherList();
+  if (name==='settings') renderSettingsPage();
+}
+
+// ── DATE HELPERS ───────────────────────────────────────────────────────
+function today() {
+  const d = new Date();
+  return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`;
+}
+function fmtTime(ts) {
+  const d = new Date(ts);
+  return `${String(d.getHours()).padStart(2,'0')}:${String(d.getMinutes()).padStart(2,'0')}`;
+}
+function fmtDate(ds) {
+  const [y,m,d] = ds.split('-');
+  return `${d} ${MONTH_NAMES[parseInt(m)-1]}`;
+}
+
+// ── SESSION ────────────────────────────────────────────────────────────
+function startSession() {
+  const now = Date.now();
+  S.sessionStart = now;
+  S.takenDoses = [now];
+  S.missedDoses = [];
+  save();
+  renderToday();
+  toast('✅ Πρώτη δόση καταγράφηκε!');
+}
+
+function resetSession() {
+  if (!confirm('Νέα ημέρα; Το σημερινό ιστορικό θα αποθηκευτεί.')) return;
+  archiveToday();
+  S.sessionStart = null; S.takenDoses = []; S.missedDoses = [];
+  save(); renderToday();
+}
+
+function archiveToday() {
+  if (!S.sessionStart) return;
+  S.history[today()] = {
+    sessionStart: S.sessionStart,
+    taken: [...S.takenDoses],
+    missed: [...S.missedDoses],
+    dose: S.dose,
+    intervalMin: S.intervalMin,
+    maxDoses: S.maxDoses
+  };
+}
+
+function buildSchedule() {
+  if (!S.sessionStart) return [];
+  const MD = getMaxDoses();
+  const IV = getInterval();
+  return Array.from({length: MD}, (_,i) => ({
+    index: i,
+    scheduled: S.sessionStart + i*IV,
+    taken: i < S.takenDoses.length,
+    missed: S.missedDoses.includes(i)
+  }));
+}
+
+function markTaken(i) {
+  if (i !== S.takenDoses.length) return;
+  S.takenDoses.push(Date.now());
+  if (S.missedDoses.includes(i)) S.missedDoses = S.missedDoses.filter(x=>x!==i);
+  save(); renderToday();
+  toast(`✅ Δόση ${i+1} καταγράφηκε!`);
+}
+
+function markMissed(i) {
+  if (!S.missedDoses.includes(i)) S.missedDoses.push(i);
+  save(); renderToday();
+  toast(`⚠️ Δόση ${i+1} σημειώθηκε ως χαμένη`);
+}
+
+// ── RENDER TODAY ────────────────────────────────────────────────────────
+function renderToday() {
+  // header date
+  const d = new Date();
+  document.getElementById('header-date').textContent =
+    `${DAY_NAMES[d.getDay()]} ${d.getDate()} ${MONTH_NAMES[d.getMonth()]}`;
+
+  if (!S.sessionStart) {
+    document.getElementById('no-session').style.display='block';
+    document.getElementById('active-session').style.display='none';
+    return;
+  }
+  document.getElementById('no-session').style.display='none';
+  document.getElementById('active-session').style.display='block';
+  document.getElementById('main-dose-display').textContent = S.dose;
+
+  const sched = buildSchedule();
+  const now = Date.now();
+
+  const MD = getMaxDoses();
+  // stats
+  const taken = sched.filter(d=>d.taken).length;
+  const missed = sched.filter(d=>d.missed&&!d.taken).length;
+  const pending = MD - taken - missed;
+  document.getElementById('stat-taken').textContent = taken;
+  document.getElementById('stat-missed').textContent = missed;
+  document.getElementById('stat-pending').textContent = pending;
+
+  // schedule list
+  const list = document.getElementById('schedule-list');
+  list.innerHTML = sched.map(d => {
+    const t = new Date(d.scheduled);
+    const tStr = `${String(t.getHours()).padStart(2,'0')}:${String(t.getMinutes()).padStart(2,'0')}`;
+    const foodFrom = new Date(d.scheduled - 3600000);
+    const foodTo = new Date(d.scheduled + 3600000);
+    const fFrom = `${String(foodFrom.getHours()).padStart(2,'0')}:${String(foodFrom.getMinutes()).padStart(2,'0')}`;
+    const fTo = `${String(foodTo.getHours()).padStart(2,'0')}:${String(foodTo.getMinutes()).padStart(2,'0')}`;
+
+    const isNext = !d.taken && !d.missed && sched.slice(0,d.index).every(x=>x.taken||x.missed);
+    const isPast = d.scheduled < now - 600000; // 10min grace
+
+    let numCls='pending', timeCls='', badgeHtml='', actions='';
+    if (d.taken) {
+      numCls='taken'; timeCls='taken';
+      badgeHtml=`<span class="badge badge-taken">✓</span>`;
+    } else if (d.missed) {
+      numCls='missed'; timeCls='missed';
+      badgeHtml=`<span class="badge badge-missed">✗ Χάθηκε</span>`;
+    } else if (isNext) {
+      numCls='next'; timeCls='next';
+      badgeHtml=`<span class="badge badge-next">⏳ Επόμενο</span>`;
+      actions=`<div style="display:flex;gap:6px;margin-top:8px;">
+        <button class="btn btn-green btn-sm" style="flex:1;padding:8px;" onclick="markTaken(${d.index})">✓ Έλαβα</button>
+        ${isPast?`<button class="btn btn-red-ghost btn-sm" onclick="markMissed(${d.index})">✗ Παράλειψη</button>`:''}
+      </div>`;
+    } else {
+      badgeHtml=`<span class="badge badge-pending">—</span>`;
+    }
+
+    const foodHtml = !d.taken && !d.missed
+      ? `<span class="food-tag">🍽 Όχι φαγητό ${fFrom}–${fTo}</span>`
+      : '';
+
+    return `<div class="dose-row">
+      <div class="dose-num ${numCls}">${d.index+1}</div>
+      <div class="dose-info" style="flex:1;">
+        <div class="dose-time ${timeCls}">${tStr}</div>
+        <div class="dose-meta">${S.dose} χάπι${d.taken?' · Ελήφθη '+fmtTime(S.takenDoses[d.index]):''}</div>
+        ${foodHtml}
+        ${actions}
+      </div>
+      ${badgeHtml}
+    </div>`;
+  }).join('');
+
+  renderCountdown(sched, now);
+}
+
+function renderCountdown(sched, now) {
+  const next = sched.find(d => !d.taken && !d.missed && sched.slice(0,d.index).every(x=>x.taken||x.missed));
+  const display = document.getElementById('countdown-time');
+  const sub = document.getElementById('countdown-sub');
+  const wrap = document.getElementById('countdown-wrap');
+
+  if (!next) {
+    display.textContent = '🎉';
+    sub.textContent = 'Όλες οι δόσεις ολοκληρώθηκαν!';
+    display.className = 'countdown-time';
+    return;
+  }
+
+  const diff = Math.max(0, next.scheduled - now);
+  if (diff < 60000) {
+    display.textContent = 'ΤΩΡΑ!';
+    display.className = 'countdown-time urgent';
+  } else {
+    const h = Math.floor(diff/3600000);
+    const m = Math.floor((diff%3600000)/60000);
+    const s = Math.floor((diff%60000)/1000);
+    display.textContent = `${String(h).padStart(2,'0')}:${String(m).padStart(2,'0')}:${String(s).padStart(2,'0')}`;
+    display.className = diff < 600000 ? 'countdown-time urgent' : 'countdown-time';
+  }
+
+  const nt = new Date(next.scheduled);
+  const ntStr = `${String(nt.getHours()).padStart(2,'0')}:${String(nt.getMinutes()).padStart(2,'0')}`;
+  sub.textContent = `Δόση ${next.index+1} στις ${ntStr}  ·  ${S.dose} χάπι  ·  ${next.index+1}/${getMaxDoses()}`;
+}
+
+// ── WEEKLY ─────────────────────────────────────────────────────────────
+function renderWeek() {
+  const grid = document.getElementById('week-grid');
+  const d = new Date();
+  const dow = d.getDay(); // 0=Sun
+  const monday = new Date(d); monday.setDate(d.getDate() - ((dow+6)%7));
+
+  // include today's live session
+  const liveHistory = {...S.history};
+  if (S.sessionStart) {
+    liveHistory[today()] = { sessionStart:S.sessionStart, taken:S.takenDoses, missed:S.missedDoses, dose:S.dose, intervalMin:S.intervalMin, maxDoses:S.maxDoses };
+  }
+
+  grid.innerHTML = Array.from({length:7},(_,i)=>{
+    const day = new Date(monday); day.setDate(monday.getDate()+i);
+    const ds = `${day.getFullYear()}-${String(day.getMonth()+1).padStart(2,'0')}-${String(day.getDate()).padStart(2,'0')}`;
+    const isToday = ds === today();
+    const isFuture = day > new Date();
+    const rec = liveHistory[ds];
+
+    let dotCls = 'empty', label = '—';
+    if (isFuture && !isToday) { dotCls='future'; label=''; }
+    else if (rec) {
+      const taken = rec.taken.length;
+      const missed = rec.missed ? rec.missed.length : 0;
+      label = `${taken}`;
+      if (missed === 0 && taken >= MAX_DOSES) dotCls='full';
+      else if (missed > 0) dotCls='missed-day';
+      else dotCls='partial';
+    }
+
+    return `<div class="week-day">
+      <div class="week-day-label">${DAY_NAMES[(monday.getDay()+i)%7]}</div>
+      <div class="week-day-dot ${dotCls} ${isToday?'today':''}" onclick="showWeekDay('${ds}')">${label}</div>
+    </div>`;
+  }).join('');
+
+  // other pills weekly
+  renderOtherWeekly();
+}
+
+function showWeekDay(ds) {
+  const liveHistory2 = {...S.history};
+  if (S.sessionStart) liveHistory2[today()] = { sessionStart:S.sessionStart, taken:S.takenDoses, missed:S.missedDoses, dose:S.dose, intervalMin:S.intervalMin, maxDoses:S.maxDoses };
+
+  document.getElementById('week-day-title').textContent = fmtDate(ds);
+  const detail = document.getElementById('week-day-detail');
+  const rec = liveHistory2[ds];
+
+  if (!rec) {
+    detail.innerHTML = `<div class="empty"><div class="e-icon">📋</div><div>Δεν υπάρχουν δεδομένα</div></div>`;
+    return;
+  }
+
+  const recMD = rec.maxDoses || 6;
+  const recIV = (rec.intervalMin || 190) * 60 * 1000;
+  const sched = Array.from({length:recMD},(_,i)=>({
+    index:i,
+    scheduled: rec.sessionStart + i*recIV,
+    taken: i < rec.taken.length,
+    missed: rec.missed && rec.missed.includes(i)
+  }));
+
+  detail.innerHTML = sched.map(d=>{
+    const t = new Date(d.scheduled);
+    const tStr = `${String(t.getHours()).padStart(2,'0')}:${String(t.getMinutes()).padStart(2,'0')}`;
+    let icon='⬜', color='var(--muted)';
+    if (d.taken){icon='✅';color='var(--green)';}
+    else if (d.missed){icon='❌';color='var(--red)';}
+    return `<div style="display:flex;align-items:center;gap:10px;padding:8px 0;border-bottom:1px solid var(--border);">
+      <span style="font-size:1rem;">${icon}</span>
+      <span style="color:${color};font-variant-numeric:tabular-nums;font-weight:600;">${tStr}</span>
+      <span style="font-size:0.78rem;color:var(--muted);">${rec.dose||'¾'} χάπι ${d.taken?' · '+fmtTime(rec.taken[d.index]):(d.missed?' · Παραλείφθηκε':'')}</span>
+    </div>`;
+  }).join('');
+}
+
+function renderOtherWeekly() {
+  const section = document.getElementById('other-pills-weekly');
+  const list = document.getElementById('other-pills-weekly-list');
+  if (S.otherPills.length===0){section.style.display='none';return;}
+  section.style.display='block';
+  list.innerHTML = S.otherPills.map(p=>{
+    const daysLeft = p.endDate ? Math.ceil((new Date(p.endDate)-new Date())/86400000) : null;
+    let status='', sCls='';
+    if (!p.endDate){status='Χωρίς λήξη'; sCls='';}
+    else if(daysLeft<=0){status='Τελείωσε'; sCls='expired';}
+    else if(daysLeft<=3){status=`${daysLeft} μέρες`; sCls='ending-soon';}
+    else{status=`${daysLeft} μέρες`; sCls='';}
+    return `<div class="other-row">
+      <div class="other-icon">💊</div>
+      <div class="other-info">
+        <div class="other-name">${p.name}</div>
+        <div class="other-detail">${p.dose} · ${p.times}× ημερησίως · ${p.timesArr.join(', ')}</div>
+      </div>
+      ${p.endDate?`<span class="other-status ${sCls}">${status}</span>`:''}
+    </div>`;
+  }).join('');
+}
+
+// ── OTHER PILLS ─────────────────────────────────────────────────────────
+function updateTimeInputs() {
+  const n = parseInt(document.getElementById('np-times').value);
+  const wrap = document.getElementById('time-inputs');
+  const defaults = ['08:00','13:00','20:00','22:00'];
+  wrap.innerHTML = Array.from({length:n},(_,i)=>
+    `<div class="time-input-wrap">
+      <span style="font-size:0.75rem;color:var(--muted);">${i+1}η</span>
+      <input type="time" value="${defaults[i]||'08:00'}" id="np-time-${i}">
+    </div>`
+  ).join('');
+}
+
+function addOtherPill() {
+  const name = document.getElementById('np-name').value.trim();
+  const dose = document.getElementById('np-dose').value.trim();
+  const times = parseInt(document.getElementById('np-times').value);
+  const duration = parseInt(document.getElementById('np-duration').value);
+  const startVal = document.getElementById('np-start').value;
+  const notes = document.getElementById('np-notes').value.trim();
+
+  if (!name||!dose){toast('⚠️ Συμπλήρωσε όνομα και δόση'); return;}
+
+  const timesArr = Array.from({length:times},(_,i)=>{
+    const el = document.getElementById(`np-time-${i}`);
+    return el ? el.value : '08:00';
+  });
+
+  const startDate = startVal || today();
+  let endDate = null;
+  if (duration > 0) {
+    const end = new Date(startDate);
+    end.setDate(end.getDate() + duration);
+    endDate = end.toISOString().split('T')[0];
+  }
+
+  S.otherPills.push({name,dose,times,timesArr,notes,startDate,endDate});
+  save(); renderOtherList();
+  document.getElementById('np-name').value='';
+  document.getElementById('np-dose').value='';
+  document.getElementById('np-notes').value='';
+  toast('✅ Χάπι προστέθηκε!');
+}
+
+function removeOtherPill(i) {
+  S.otherPills.splice(i,1);
+  save(); renderOtherList(); renderSettingsPage();
+  toast('🗑 Αφαιρέθηκε');
+}
+
+function renderOtherList() {
+  const wrap = document.getElementById('other-list-wrap');
+  if (S.otherPills.length===0){
+    wrap.innerHTML=`<div class="empty"><div class="e-icon">💊</div><div>Δεν έχουν προστεθεί χάπια ακόμα</div></div>`;
+    return;
+  }
+  wrap.innerHTML = S.otherPills.map((p,i)=>{
+    const daysLeft = p.endDate ? Math.ceil((new Date(p.endDate)-new Date())/86400000) : null;
+    let statusHtml='';
+    if (p.endDate) {
+      const sCls = daysLeft<=0?'expired':daysLeft<=3?'ending-soon':'';
+      const txt = daysLeft<=0?'Τελείωσε':daysLeft===1?'Τελευταία μέρα!':`${daysLeft} μέρες απομένουν`;
+      statusHtml=`<span class="other-status ${sCls}">${txt}</span>`;
+    }
+    return `<div class="card" style="margin-bottom:10px;">
+      <div style="display:flex;align-items:flex-start;gap:12px;">
+        <div class="other-icon">💊</div>
+        <div style="flex:1;">
+          <div style="font-family:'Syne',sans-serif;font-weight:700;font-size:0.95rem;">${p.name}</div>
+          <div style="font-size:0.78rem;color:var(--muted);margin-top:4px;">${p.dose} · ${p.times}× / μέρα</div>
+          <div style="font-size:0.78rem;color:var(--blue);margin-top:2px;">🕐 ${p.timesArr.join(' · ')}</div>
+          ${p.notes?`<div style="font-size:0.73rem;color:var(--muted);margin-top:2px;">📝 ${p.notes}</div>`:''}
+          ${p.endDate?`<div style="font-size:0.73rem;color:var(--muted);margin-top:2px;">📅 Έως ${fmtDate(p.endDate)}</div>`:''}
+          <div style="margin-top:8px;">${statusHtml}</div>
+        </div>
+        <button class="btn btn-red-ghost" style="padding:6px 10px;font-size:0.75rem;" onclick="removeOtherPill(${i})">✕</button>
+      </div>
+    </div>`;
+  }).join('');
+}
+
+// ── SETTINGS ────────────────────────────────────────────────────────────
+function saveMainDose() {
+  S.dose = document.getElementById('main-dose-select').value;
+  S.intervalMin = parseInt(document.getElementById('main-interval-select').value);
+  S.maxDoses = parseInt(document.getElementById('main-maxdoses-select').value);
+  save(); renderToday();
+  toast(`✅ Δόση: ${S.dose} · κάθε ${fmtInterval(S.intervalMin)} · ${S.maxDoses}× / μέρα`);
+}
+
+function fmtInterval(min) {
+  const h = Math.floor(min/60), m = min%60;
+  return m===0 ? `${h}ω` : `${h}ω ${m}λ`;
+}
+
+function saveSettings() {
+  S.reportPhone1 = document.getElementById('report-phone1').value.trim();
+  S.reportName1 = document.getElementById('report-name1').value.trim() || 'Αποδέκτης 1';
+  S.reportPhone2 = document.getElementById('report-phone2').value.trim();
+  S.reportName2 = document.getElementById('report-name2').value.trim() || 'Αποδέκτης 2';
+  save();
+  toast('✅ Αποθηκεύτηκε!');
+}
+
+function renderSettingsPage() {
+  document.getElementById('main-dose-select').value = S.dose;
+  document.getElementById('main-interval-select').value = S.intervalMin || 190;
+  document.getElementById('main-maxdoses-select').value = S.maxDoses || 6;
+  document.getElementById('report-phone1').value = S.reportPhone1||'';
+  document.getElementById('report-name1').value = S.reportName1||'';
+  document.getElementById('report-phone2').value = S.reportPhone2||'';
+  document.getElementById('report-name2').value = S.reportName2||'';
+
+  const sec = document.getElementById('saved-other-settings');
+  const list = document.getElementById('settings-other-list');
+  if (S.otherPills.length===0){sec.style.display='none';return;}
+  sec.style.display='block';
+  list.innerHTML = S.otherPills.map((p,i)=>
+    `<div class="other-row">
+      <div class="other-info"><div class="other-name">${p.name}</div>
+      <div class="other-detail">${p.dose} · ${p.times}× · ${p.timesArr.join(', ')}</div></div>
+      <button class="btn btn-red-ghost btn-sm" onclick="removeOtherPill(${i})">✕</button>
+    </div>`
+  ).join('');
+}
+
+// ── REPORT ──────────────────────────────────────────────────────────────
+function buildReport() {
+  const d = new Date();
+  const dateStr = `${d.getDate()} ${MONTH_NAMES[d.getMonth()]} ${d.getFullYear()}`;
+  const sched = buildSchedule();
+  const now = Date.now();
+
+  let lines = [];
+  lines.push(`📋 ΗΜΕΡΗΣΙΟ REPORT ΧΑΠΙΩΝ`);
+  lines.push(`📅 ${dateStr}`);
+  lines.push(`──────────────────────────`);
+  lines.push(`💊 ΚΥΡΙΟ ΧΑΠΙ (${S.dose}/δόση)`);
+  lines.push('');
+
+  let taken=0, missed=0;
+  sched.forEach(d=>{
+    const t = new Date(d.scheduled);
+    const tStr = `${String(t.getHours()).padStart(2,'0')}:${String(t.getMinutes()).padStart(2,'0')}`;
+    if (d.taken) { lines.push(`  ✅ ${tStr} — Ελήφθη (${fmtTime(S.takenDoses[d.index])})`); taken++; }
+    else if (d.missed) { lines.push(`  ❌ ${tStr} — ΠΑΡΑΛΕΙΦΘΗΚΕ`); missed++; }
+    else if (d.scheduled < now) { lines.push(`  ⚠️  ${tStr} — Εκκρεμεί`); }
+    else { lines.push(`  ⏳ ${tStr} — Προγραμματισμένο`); }
+  });
+
+  lines.push('');
+  lines.push(`Σύνολο: ${taken}/${getMaxDoses()} ✅  |  Χαμένες: ${missed} ❌`);
+
+  if (S.otherPills.length > 0) {
+    lines.push('');
+    lines.push(`──────────────────────────`);
+    lines.push(`💊 ΑΛΛΑ ΧΑΠΙΑ`);
+    S.otherPills.forEach(p=>{
+      const daysLeft = p.endDate ? Math.ceil((new Date(p.endDate)-new Date())/86400000) : null;
+      const status = !p.endDate?'':'  📅 ' + (daysLeft<=0?'Τελείωσε!':daysLeft===1?'Τελευταία μέρα!':daysLeft+' μέρες απομένουν');
+      lines.push(`  • ${p.name} ${p.dose} — ${p.times}×/μέρα (${p.timesArr.join(', ')})${status}`);
+    });
+  }
+
+  lines.push('');
+  lines.push(`──────────────────────────`);
+  lines.push(`Αποστολή μέσω MediTrack App`);
+
+  return lines.join('\n');
+}
+
+function showReport() {
+  const text = buildReport();
+  document.getElementById('report-text').textContent = text;
+  document.getElementById('wa-name1').textContent = S.reportName1||'Αποδέκτης 1';
+  document.getElementById('wa-name2').textContent = S.reportName2||'Αποδέκτης 2';
+  document.getElementById('wa-btn2').style.display = S.reportPhone2 ? 'flex' : 'none';
+  document.getElementById('report-modal').style.display = 'flex';
+}
+
+function sendWhatsApp(num) {
+  const phone = num===1 ? S.reportPhone1 : S.reportPhone2;
+  const text = buildReport();
+  const clean = phone.replace(/\s+/g,'').replace('+','');
+  const url = clean
+    ? `https://wa.me/${clean}?text=${encodeURIComponent(text)}`
+    : `https://wa.me/?text=${encodeURIComponent(text)}`;
+  window.open(url, '_blank');
+}
+
+function closeReport() {
+  document.getElementById('report-modal').style.display='none';
+}
+
+// ── TOAST ───────────────────────────────────────────────────────────────
+let _tt;
+function toast(msg) {
+  const t=document.getElementById('toast');
+  t.textContent=msg; t.classList.add('show');
+  clearTimeout(_tt); _tt=setTimeout(()=>t.classList.remove('show'),3000);
+}
+
+// ── INIT ────────────────────────────────────────────────────────────────
+load();
+// Set default start date to today
+const npStart = document.getElementById('np-start');
+if (npStart) npStart.value = today();
+
+renderToday();
+setInterval(()=>{ if(S.sessionStart) renderToday(); }, 1000);
+</script>
+</body>
+</html>

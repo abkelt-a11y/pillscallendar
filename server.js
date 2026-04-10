@@ -7,7 +7,17 @@ app.use(cors());
 app.use(express.json());
 
 // Initialize Firebase Admin with service account from env
-const serviceAccount = JSON.parse(process.env.FCM_SERVER_KEY);
+let serviceAccount;
+try {
+  const raw = process.env.FCM_SERVER_KEY;
+  // Handle both single-line and multiline JSON
+  serviceAccount = JSON.parse(raw.trim());
+} catch(e) {
+  console.error('Failed to parse FCM_SERVER_KEY:', e.message);
+  console.error('Value starts with:', process.env.FCM_SERVER_KEY?.substring(0, 50));
+  process.exit(1);
+}
+
 admin.initializeApp({
   credential: admin.credential.cert(serviceAccount)
 });

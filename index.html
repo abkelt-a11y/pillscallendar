@@ -3,7 +3,13 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
-<title>Χάπια Τάσου</title>
+<title>MediTrack</title>
+<meta name="theme-color" content="#080c14">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="MediTrack">
+<link rel="manifest" href="manifest.json">
 <style>
 @import url('https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=Mulish:wght@300;400;500;600&display=swap');
 
@@ -377,6 +383,9 @@ body {
     </div>
     <div class="header-date" id="header-date">—</div>
   </div>
+  <button id="install-btn" onclick="installApp()" style="display:none; margin-top:10px; width:100%; padding:10px; background:rgba(74,222,128,0.1); border:1px solid rgba(74,222,128,0.3); border-radius:10px; color:var(--green); font-family:'Mulish',sans-serif; font-size:0.82rem; font-weight:600; cursor:pointer; align-items:center; justify-content:center; gap:8px;">
+    📲 Εγκατάσταση στο κινητό
+  </button>
 </div>
 
 <!-- PAGE: TODAY -->
@@ -567,6 +576,9 @@ body {
       <div class="form-group">
         <label class="form-label">Διάστημα δόσεων</label>
         <select class="form-select" id="main-interval-select" onchange="saveMainDose()">
+          <option value="2">🧪 2 λεπτά (δοκιμή)</option>
+          <option value="5">🧪 5 λεπτά (δοκιμή)</option>
+          <option value="10">🧪 10 λεπτά (δοκιμή)</option>
           <option value="120">2 ώρες</option>
           <option value="150">2ω 30λ</option>
           <option value="180">3 ώρες</option>
@@ -1182,12 +1194,145 @@ function toast(msg) {
 
 // ── INIT ────────────────────────────────────────────────────────────────
 load();
-// Set default start date to today
 const npStart = document.getElementById('np-start');
 if (npStart) npStart.value = today();
 
 renderToday();
 setInterval(()=>{ if(S.sessionStart) renderToday(); }, 1000);
+
+// ── PWA & NOTIFICATIONS ─────────────────────────────────────────────────
+if ('serviceWorker' in navigator) {
+  navigator.serviceWorker.register('sw.js').then(reg => {
+    console.log('SW registered');
+  }).catch(e => console.log('SW error', e));
+}
+
+// ── FCM & NOTIFICATIONS ─────────────────────────────────────────────────
+const VAPID_KEY = 'BOmkoKxKBRgBiE4-AydT9R78Z3UcbigYqHdgawjRrZXJmRNvXSCfnRi56y5_mgJRAZiA_5kbW8GOlfZOoq0O1q0';
+const SERVER_URL = 'https://meditrack-server.onrender.com'; // θα αλλάξει μετά το deploy
+
+const FB_CONFIG = {
+  apiKey: "AIzaSyCQKEudyT0QocST8Lv2qFkZpaB26Z8NICE",
+  authDomain: "pillreminder-16c83.firebaseapp.com",
+  projectId: "pillreminder-16c83",
+  storageBucket: "pillreminder-16c83.firebasestorage.app",
+  messagingSenderId: "26784109029",
+  appId: "1:26784109029:web:354621357ef85d8df49f0c"
+};
+
+let fbMessaging = null;
+
+async function initFCM() {
+  try {
+    const { initializeApp } = await import('https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js');
+    const { getMessaging, getToken, onMessage } = await import('https://www.gstatic.com/firebasejs/10.12.0/firebase-messaging.js');
+    const app = initializeApp(FB_CONFIG);
+    fbMessaging = getMessaging(app);
+    const swReg = await navigator.serviceWorker.ready;
+    const token = await getToken(fbMessaging, { vapidKey: VAPID_KEY, serviceWorkerRegistration: swReg });
+    if (token) {
+      localStorage.setItem('fcm_token', token);
+      console.log('[FCM] Ready');
+    }
+    onMessage(fbMessaging, payload => {
+      const n = payload.notification || {};
+      toast(`💊 ${n.body || 'Ώρα για χάπι!'}`);
+    });
+  } catch(e) {
+    console.warn('[FCM] Init error:', e);
+  }
+}
+
+async function requestNotificationPermission() {
+  if (!('Notification' in window)) return false;
+  if (Notification.permission === 'granted') { await initFCM(); return true; }
+  const result = await Notification.requestPermission();
+  if (result === 'granted') { await initFCM(); return true; }
+  return false;
+}
+
+async function scheduleNotifications() {
+  const granted = await requestNotificationPermission();
+  if (!granted || !S.sessionStart) return;
+  const sched = buildSchedule();
+  const now = Date.now();
+  const upcoming = sched
+    .filter(d => !d.taken && !d.missed && d.scheduled > now)
+    .map(d => ({ time: d.scheduled, index: d.index, dose: S.dose, label: `Δόση ${d.index+1} από ${getMaxDoses()}` }));
+
+  // Send to local SW (works while app is open)
+  if (navigator.serviceWorker.controller) {
+    navigator.serviceWorker.controller.postMessage({ type: 'SCHEDULE_NOTIFICATIONS', doses: upcoming });
+  }
+
+  // Send to server (works even with closed screen)
+  const token = localStorage.getItem('fcm_token');
+  if (token && upcoming.length > 0) {
+    try {
+      await fetch(`${SERVER_URL}/schedule`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ token, doses: upcoming })
+      });
+      console.log('[App] Scheduled on server');
+    } catch(e) {
+      console.warn('[App] Server schedule failed:', e);
+    }
+  }
+}
+
+async function scheduleNotifications() {
+  const granted = await requestNotificationPermission();
+  if (!granted || !S.sessionStart) return;
+
+  const sched = buildSchedule();
+  const now = Date.now();
+
+  // Send scheduled times to service worker
+  const upcoming = sched
+    .filter(d => !d.taken && !d.missed && d.scheduled > now)
+    .map(d => ({
+      time: d.scheduled,
+      index: d.index,
+      dose: S.dose,
+      label: `Δόση ${d.index+1} από ${getMaxDoses()}`
+    }));
+
+  if (navigator.serviceWorker.controller) {
+    navigator.serviceWorker.controller.postMessage({
+      type: 'SCHEDULE_NOTIFICATIONS',
+      doses: upcoming
+    });
+  }
+}
+
+// Request permission and schedule on session start
+const origStart = startSession;
+startSession = function() {
+  origStart();
+  setTimeout(scheduleNotifications, 500);
+};
+
+// Reschedule on load if session active
+if (S.sessionStart) {
+  setTimeout(scheduleNotifications, 1000);
+}
+
+// Install prompt for Android
+let deferredPrompt;
+window.addEventListener('beforeinstallprompt', e => {
+  e.preventDefault();
+  deferredPrompt = e;
+  // Show install button if not already installed
+  const installBtn = document.getElementById('install-btn');
+  if (installBtn) installBtn.style.display = 'flex';
+});
+
+function installApp() {
+  if (!deferredPrompt) return;
+  deferredPrompt.prompt();
+  deferredPrompt.userChoice.then(() => { deferredPrompt = null; });
+}
 </script>
 </body>
 </html>
